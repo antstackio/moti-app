@@ -1,26 +1,35 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { Image as MotiImage } from "moti";
+import { View, StyleSheet, Animated, Easing } from "react-native";
 
 export default function App() {
+	const [spinValue, setSpinValue] = React.useState(new Animated.Value(0));
+
+	React.useEffect(() => {
+		runAnimationFn();
+	}, []);
+
+	const runAnimationFn = () => {
+		Animated.loop(
+			Animated.timing(spinValue, {
+				toValue: 1,
+				duration: 3000,
+				easing: Easing.linear,
+				useNativeDriver: false,
+			})
+		).start();
+	};
+
+	const spin = spinValue.interpolate({
+		inputRange: [0, 1],
+		outputRange: ["0deg", "360deg"],
+	});
 	return (
 		<View style={styles.container}>
-			<MotiImage
+			<Animated.Image
 				style={{
 					width: 227,
 					height: 200,
-				}}
-				from={{
-					rotate: "0deg",
-				}}
-				animate={{
-					rotate: "360deg",
-				}}
-				transition={{
-					loop: true,
-					repeatReverse: false,
-					type: "timing",
-					duration: 3000,
+					transform: [{ rotate: spin }],
 				}}
 				source={require("./assets/reactjs.png")}
 			/>
